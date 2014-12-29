@@ -29,9 +29,15 @@ func NewDocumentFromNode(root *html.Node) *Document {
 // NewDocument is a Document constructor that takes a string URL as argument.
 // It loads the specified document, parses it, and stores the root Document
 // node, ready to be manipulated.
-func NewDocument(url string) (*Document, error) {
+func NewDocument(url string, ua *string) (*Document, error) {
 	// Load the URL
-	res, e := http.Get(url)
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("User-Agent", *ua)
+	res, e := client.Do(req)
 	if e != nil {
 		return nil, e
 	}
